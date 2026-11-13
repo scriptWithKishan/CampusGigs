@@ -1,9 +1,4 @@
-import {
-	createFileRoute,
-	Link,
-	redirect,
-	useRouter,
-} from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import {
 	AlertCircle,
 	ArrowRight,
@@ -19,7 +14,6 @@ import {
 	IdCard,
 	Inbox,
 	Loader2,
-	LogOut,
 	Mail,
 	Plus,
 	School,
@@ -43,23 +37,13 @@ import {
 } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-import { getCurrentUserFn, logOutFn } from "../server/authFns";
 import {
 	getStudentApplicationsFn,
 	reviewStudentApplicationFn,
 	type StudentApplicationItem,
 } from "../server/collegeAdminFns";
 
-export const Route = createFileRoute("/dashboard")({
-	beforeLoad: async () => {
-		const user = await getCurrentUserFn();
-		if (!user) {
-			throw redirect({
-				to: "/login",
-			});
-		}
-		return { user };
-	},
+export const Route = createFileRoute("/_authenticated/dashboard")({
 	loader: async ({ context }) => {
 		let studentApplications: StudentApplicationItem[] = [];
 		if (
@@ -80,20 +64,6 @@ export const Route = createFileRoute("/dashboard")({
 function DashboardPage() {
 	const router = useRouter();
 	const { user, studentApplications = [] } = Route.useLoaderData();
-	const [loggingOut, setLoggingOut] = useState(false);
-
-	const handleLogout = async () => {
-		try {
-			setLoggingOut(true);
-			await logOutFn();
-			await router.invalidate();
-			await router.navigate({ to: "/login" });
-		} catch (err) {
-			console.error("Logout error:", err);
-		} finally {
-			setLoggingOut(false);
-		}
-	};
 
 	const isStudent = user.role === "STUDENT";
 	const isCollegeAdmin = user.role === "COLLEGE_ADMIN";
@@ -278,26 +248,14 @@ function DashboardPage() {
 							</div>
 						</div>
 
-						<div className="flex items-center gap-3">
-							<Button
-								variant="outline"
-								onClick={handleLogout}
-								disabled={loggingOut}
-								className="h-9 px-4 text-xs font-semibold gap-2 border-border text-foreground hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 transition-colors"
+						{isStudent && (
+							<Link
+								to="/gigs/new"
+								className="text-sm font-medium text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground transition-colors"
 							>
-								{loggingOut ? (
-									<>
-										<Loader2 className="w-3.5 h-3.5 animate-spin" />
-										<span>Logging out...</span>
-									</>
-								) : (
-									<>
-										<LogOut className="w-3.5 h-3.5" />
-										<span>Log out</span>
-									</>
-								)}
-							</Button>
-						</div>
+								Post a gig
+							</Link>
+						)}
 					</CardContent>
 				</Card>
 
@@ -379,9 +337,15 @@ function DashboardPage() {
 
 							{/* Actions for college admin */}
 							<div className="flex flex-wrap items-center gap-3 pt-2 border-t border-border/60">
-								<Button size="sm" className="font-medium text-xs gap-1.5">
-									<Plus className="w-3.5 h-3.5" />
-									Post New Campus Gig
+								<Button
+									size="sm"
+									asChild
+									className="font-medium text-xs gap-1.5"
+								>
+									<Link to="/gigs">
+										<Plus className="w-3.5 h-3.5" />
+										Browse Campus Gigs
+									</Link>
 								</Button>
 								<Button
 									variant="outline"
