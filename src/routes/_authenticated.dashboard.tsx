@@ -247,6 +247,15 @@ function DashboardPage() {
 								</p>
 							</div>
 						</div>
+
+						{isStudent && (
+							<Link
+								to="/gigs/new"
+								className="text-sm font-medium text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground transition-colors"
+							>
+								Post a gig
+							</Link>
+						)}
 					</CardContent>
 				</Card>
 
@@ -328,9 +337,15 @@ function DashboardPage() {
 
 							{/* Actions for college admin */}
 							<div className="flex flex-wrap items-center gap-3 pt-2 border-t border-border/60">
-								<Button size="sm" className="font-medium text-xs gap-1.5">
-									<Plus className="w-3.5 h-3.5" />
-									Post New Campus Gig
+								<Button
+									size="sm"
+									asChild
+									className="font-medium text-xs gap-1.5"
+								>
+									<Link to="/gigs">
+										<Plus className="w-3.5 h-3.5" />
+										Browse Campus Gigs
+									</Link>
 								</Button>
 								<Button
 									variant="outline"

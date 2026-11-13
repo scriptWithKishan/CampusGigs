@@ -109,6 +109,19 @@ function Navbar({ user }: { user: AuthUser | null }) {
 
 						{user && (
 							<Link
+								to="/gigs"
+								className={navLinkClass}
+								activeProps={{
+									className:
+										"text-foreground font-semibold after:!w-full after:!bg-foreground",
+								}}
+							>
+								Gigs
+							</Link>
+						)}
+
+						{user && (
+							<Link
 								to="/dashboard"
 								className={navLinkClass}
 								activeProps={{
@@ -195,6 +208,16 @@ function Navbar({ user }: { user: AuthUser | null }) {
 					>
 						Explore
 					</Link>
+
+					{user && (
+						<Link
+							to="/gigs"
+							onClick={() => setMobileMenuOpen(false)}
+							className="block py-1.5 text-sm font-medium text-foreground hover:text-primary transition-colors"
+						>
+							Gigs
+						</Link>
+					)}
 
 					{user && (
 						<Link

@@ -15,6 +15,9 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated.admin'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
+import { Route as AuthenticatedGigsIndexRouteImport } from './routes/_authenticated.gigs.index'
+import { Route as AuthenticatedGigsGigIdRouteImport } from './routes/_authenticated.gigs.$gigId'
+import { Route as AuthenticatedGigsNewRouteImport } from './routes/_authenticated.gigs.new'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -45,6 +48,21 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedGigsIndexRoute = AuthenticatedGigsIndexRouteImport.update({
+  id: '/gigs/',
+  path: '/gigs/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedGigsGigIdRoute = AuthenticatedGigsGigIdRouteImport.update({
+  id: '/gigs/$gigId',
+  path: '/gigs/$gigId',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedGigsNewRoute = AuthenticatedGigsNewRouteImport.update({
+  id: '/gigs/new',
+  path: '/gigs/new',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -52,6 +70,9 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/gigs/$gigId': typeof AuthenticatedGigsGigIdRoute
+  '/gigs/new': typeof AuthenticatedGigsNewRoute
+  '/gigs/': typeof AuthenticatedGigsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -59,6 +80,9 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/gigs/$gigId': typeof AuthenticatedGigsGigIdRoute
+  '/gigs/new': typeof AuthenticatedGigsNewRoute
+  '/gigs': typeof AuthenticatedGigsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -68,12 +92,31 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/gigs/$gigId': typeof AuthenticatedGigsGigIdRoute
+  '/_authenticated/gigs/new': typeof AuthenticatedGigsNewRoute
+  '/_authenticated/gigs/': typeof AuthenticatedGigsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/signup' | '/admin' | '/dashboard'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/signup'
+    | '/admin'
+    | '/dashboard'
+    | '/gigs/$gigId'
+    | '/gigs/new'
+    | '/gigs/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/signup' | '/admin' | '/dashboard'
+  to:
+    | '/'
+    | '/login'
+    | '/signup'
+    | '/admin'
+    | '/dashboard'
+    | '/gigs/$gigId'
+    | '/gigs/new'
+    | '/gigs'
   id:
     | '__root__'
     | '/'
@@ -82,6 +125,9 @@ export interface FileRouteTypes {
     | '/signup'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
+    | '/_authenticated/gigs/$gigId'
+    | '/_authenticated/gigs/new'
+    | '/_authenticated/gigs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -135,17 +181,44 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/gigs/': {
+      id: '/_authenticated/gigs/'
+      path: '/gigs'
+      fullPath: '/gigs/'
+      preLoaderRoute: typeof AuthenticatedGigsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/gigs/$gigId': {
+      id: '/_authenticated/gigs/$gigId'
+      path: '/gigs/$gigId'
+      fullPath: '/gigs/$gigId'
+      preLoaderRoute: typeof AuthenticatedGigsGigIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/gigs/new': {
+      id: '/_authenticated/gigs/new'
+      path: '/gigs/new'
+      fullPath: '/gigs/new'
+      preLoaderRoute: typeof AuthenticatedGigsNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
 interface AuthenticatedRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedGigsGigIdRoute: typeof AuthenticatedGigsGigIdRoute
+  AuthenticatedGigsNewRoute: typeof AuthenticatedGigsNewRoute
+  AuthenticatedGigsIndexRoute: typeof AuthenticatedGigsIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedGigsGigIdRoute: AuthenticatedGigsGigIdRoute,
+  AuthenticatedGigsNewRoute: AuthenticatedGigsNewRoute,
+  AuthenticatedGigsIndexRoute: AuthenticatedGigsIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

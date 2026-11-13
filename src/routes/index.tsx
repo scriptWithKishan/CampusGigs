@@ -1,15 +1,19 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { getCurrentUserFn } from "../server/authFns";
+import { listGigsFn, type SerializableGig } from "../server/gigFns";
 
 export const Route = createFileRoute("/")({
 	loader: async () => {
-		const user = await getCurrentUserFn();
-		return { user };
+		const [user, gigResult] = await Promise.all([
+			getCurrentUserFn(),
+			listGigsFn({ data: { limit: 6, sort: "newest" } }).catch(() => null),
+		]);
+		return { user, gigs: gigResult?.items ?? [] };
 	},
 	component: HomePage,
 });
 
-// Typed sample gig data — placeholder until real gigs API from the gigs branch is connected
+// Fallback gig data, shown only when the marketplace has no open gigs yet.
 interface SampleGig {
 	id: string;
 	title: string;
@@ -83,8 +87,16 @@ const SAMPLE_GIGS: SampleGig[] = [
 	},
 ];
 
+function formatGigPayment(gig: SerializableGig): string {
+	const amount = `$${gig.paymentAmount.toLocaleString("en-US")}`;
+	return gig.paymentType === "HOURLY" ? `${amount} / hr` : `${amount} fixed`;
+}
+
 function HomePage() {
-	const { user } = Route.useLoaderData();
+	const { user, gigs } = Route.useLoaderData();
+
+	const hasRealGigs = gigs.length > 0;
+	const visibleGigs = hasRealGigs ? gigs.slice(0, 6) : null;
 
 	return (
 		<div className="w-full bg-background text-foreground">
@@ -207,55 +219,98 @@ function HomePage() {
 						</div>
 
 						<Link
-							to={user ? "/dashboard" : "/signup"}
+							to="/gigs"
 							className="text-sm font-medium text-foreground hover:text-primary transition-colors shrink-0"
 						>
 							Browse all gigs &rarr;
 						</Link>
 					</div>
 
-					{/* Responsive Grid of Gig Cards */}
+					{/* Responsive Grid of Gig Cards — real listings, with a sample fallback */}
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-						{SAMPLE_GIGS.map((gig) => (
-							<div
-								key={gig.id}
-								className="border border-border bg-card rounded-lg p-6 flex flex-col justify-between hover:border-foreground/35 transition-colors"
-							>
-								<div>
-									<span className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
-										{gig.department}
-									</span>
-									<h3 className="mt-2 text-base font-semibold tracking-tight text-foreground">
-										{gig.title}
-									</h3>
-									<p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-										{gig.description}
-									</p>
-								</div>
-
-								<div className="mt-6 pt-4 border-t border-border space-y-3">
-									<div className="flex flex-wrap gap-1.5">
-										{gig.skills.map((skill) => (
-											<span
-												key={skill}
-												className="px-2 py-0.5 text-xs rounded border border-border text-muted-foreground bg-secondary/50 font-medium"
-											>
-												{skill}
+						{visibleGigs
+							? visibleGigs.map((gig) => (
+									<Link
+										key={gig.id}
+										to="/gigs/$gigId"
+										params={{ gigId: gig.id }}
+										className="border border-border bg-card rounded-lg p-6 flex flex-col justify-between hover:border-foreground/35 transition-colors"
+									>
+										<div>
+											<span className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
+												{gig.collegeName}
 											</span>
-										))}
-									</div>
+											<h3 className="mt-2 text-base font-semibold tracking-tight text-foreground">
+												{gig.title}
+											</h3>
+											<p className="mt-2 text-sm text-muted-foreground leading-relaxed line-clamp-2">
+												{gig.description}
+											</p>
+										</div>
 
-									<div className="flex items-center justify-between text-xs pt-1">
-										<span className="font-semibold text-foreground">
-											{gig.compensation}
-										</span>
-										<span className="text-muted-foreground">
-											{gig.applicantCount} applicants
-										</span>
+										<div className="mt-6 pt-4 border-t border-border space-y-3">
+											<div className="flex flex-wrap gap-1.5">
+												{gig.skills.slice(0, 3).map((skill) => (
+													<span
+														key={skill}
+														className="px-2 py-0.5 text-xs rounded border border-border text-muted-foreground bg-secondary/50 font-medium"
+													>
+														{skill}
+													</span>
+												))}
+											</div>
+
+											<div className="flex items-center justify-between text-xs pt-1">
+												<span className="font-semibold text-foreground">
+													{formatGigPayment(gig)}
+												</span>
+												<span className="text-muted-foreground">
+													{gig.applicantsCount} applicants
+												</span>
+											</div>
+										</div>
+									</Link>
+								))
+							: SAMPLE_GIGS.map((gig) => (
+									<div
+										key={gig.id}
+										className="border border-border bg-card rounded-lg p-6 flex flex-col justify-between hover:border-foreground/35 transition-colors"
+									>
+										<div>
+											<span className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
+												{gig.department}
+											</span>
+											<h3 className="mt-2 text-base font-semibold tracking-tight text-foreground">
+												{gig.title}
+											</h3>
+											<p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+												{gig.description}
+											</p>
+										</div>
+
+										<div className="mt-6 pt-4 border-t border-border space-y-3">
+											<div className="flex flex-wrap gap-1.5">
+												{gig.skills.map((skill) => (
+													<span
+														key={skill}
+														className="px-2 py-0.5 text-xs rounded border border-border text-muted-foreground bg-secondary/50 font-medium"
+													>
+														{skill}
+													</span>
+												))}
+											</div>
+
+											<div className="flex items-center justify-between text-xs pt-1">
+												<span className="font-semibold text-foreground">
+													{gig.compensation}
+												</span>
+												<span className="text-muted-foreground">
+													{gig.applicantCount} applicants
+												</span>
+											</div>
+										</div>
 									</div>
-								</div>
-							</div>
-						))}
+								))}
 					</div>
 				</section>
 
