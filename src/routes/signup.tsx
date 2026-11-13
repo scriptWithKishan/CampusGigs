@@ -39,12 +39,29 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "../components/ui/select";
+import { getSafeRedirect } from "../lib/safeRedirect";
 import { getCollegesFn, getCurrentUserFn, signUpFn } from "../server/authFns";
 
+interface SignupSearch {
+	redirect?: string;
+}
+
 export const Route = createFileRoute("/signup")({
-	beforeLoad: async () => {
-		const user = await getCurrentUserFn();
+	validateSearch: (search: Record<string, unknown>): SignupSearch => {
+		return {
+			redirect:
+				typeof search.redirect === "string" ? search.redirect : undefined,
+		};
+	},
+	beforeLoad: async ({ context }) => {
+		const user =
+			context.user !== undefined ? context.user : await getCurrentUserFn();
 		if (user) {
+			if (user.role === "SUPER_ADMIN") {
+				throw redirect({
+					to: "/admin",
+				});
+			}
 			throw redirect({
 				to: "/dashboard",
 			});
@@ -59,6 +76,7 @@ export const Route = createFileRoute("/signup")({
 
 function SignupPage() {
 	const router = useRouter();
+	const { redirect: redirectParam } = Route.useSearch();
 	const { colleges } = Route.useLoaderData();
 
 	const [name, setName] = useState("");
@@ -134,7 +152,8 @@ function SignupPage() {
 
 			// Invalidate route cache to refresh auth state in root and redirect to dashboard
 			await router.invalidate();
-			await router.navigate({ to: "/dashboard" });
+			const destination = getSafeRedirect(redirectParam, res.user?.role);
+			await router.navigate({ href: destination });
 		} catch (err: unknown) {
 			const message =
 				err instanceof Error
@@ -647,6 +666,13 @@ function SignupPage() {
 							Already have an account?{" "}
 							<Link
 								to="/login"
+								search={
+									redirectParam
+										? {
+												redirect: redirectParam,
+											}
+										: undefined
+								}
 								className="font-medium text-primary hover:underline transition-colors"
 							>
 								Sign in
