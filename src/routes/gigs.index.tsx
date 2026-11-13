@@ -1,30 +1,22 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
-	ArrowRight,
 	Briefcase,
 	ChevronLeft,
 	ChevronRight,
-	Clock,
 	DollarSign,
 	Filter,
-	GraduationCap,
 	Plus,
 	RotateCcw,
 	Search,
 	Sparkles,
 	Tag,
-	Users,
 	X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { GigCard } from "../components/GigCard";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardHeader,
-	CardTitle,
-} from "../components/ui/card";
+import { Card, CardContent } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import {
 	Select,
@@ -34,11 +26,7 @@ import {
 	SelectValue,
 } from "../components/ui/select";
 import { getCurrentUserFn } from "../server/authFns";
-import {
-	type GigSortOption,
-	listGigsFn,
-	type SerializableGig,
-} from "../server/gigFns";
+import { type GigSortOption, listGigsFn } from "../server/gigFns";
 
 export interface GigSearchParams {
 	q?: string;
@@ -173,36 +161,6 @@ export const Route = createFileRoute("/gigs/")({
 	},
 	component: BrowseGigsPage,
 });
-
-function formatRelativeTime(dateString: string): string {
-	const now = Date.now();
-	const then = new Date(dateString).getTime();
-	if (Number.isNaN(then)) {
-		return "Recently";
-	}
-	const diffMs = now - then;
-	const diffSec = Math.floor(diffMs / 1000);
-	const diffMin = Math.floor(diffSec / 60);
-	const diffHours = Math.floor(diffMin / 60);
-	const diffDays = Math.floor(diffHours / 24);
-
-	if (diffDays > 30) {
-		return new Date(dateString).toLocaleDateString(undefined, {
-			month: "short",
-			day: "numeric",
-		});
-	}
-	if (diffDays > 0) {
-		return `${diffDays}d ago`;
-	}
-	if (diffHours > 0) {
-		return `${diffHours}h ago`;
-	}
-	if (diffMin > 0) {
-		return `${diffMin}m ago`;
-	}
-	return "Just now";
-}
 
 function BrowseGigsPage() {
 	const { gigsData, user, searchParams } = Route.useLoaderData();
@@ -717,139 +675,6 @@ function BrowseGigsPage() {
 				)}
 			</div>
 		</div>
-	);
-}
-
-function GigCard({ gig }: { gig: SerializableGig }) {
-	const isOpen = gig.status === "OPEN";
-
-	return (
-		<Card className="flex flex-col justify-between border-border bg-card shadow-xs hover:border-primary/50 hover:shadow-md transition-all group overflow-hidden">
-			<div>
-				{/* Top Status & Payment Badges */}
-				<CardHeader className="pb-3 space-y-3">
-					<div className="flex items-center justify-between gap-2">
-						{/* Status Badge */}
-						<Badge
-							variant="outline"
-							className={`text-[11px] font-semibold tracking-wide uppercase px-2 py-0.5 ${
-								isOpen
-									? "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-									: "border-muted-foreground/30 bg-muted/60 text-muted-foreground"
-							}`}
-						>
-							{gig.status}
-						</Badge>
-
-						{/* Payment Badge */}
-						<div className="flex items-center gap-1 font-semibold text-emerald-600 dark:text-emerald-400 text-sm bg-emerald-500/10 dark:bg-emerald-500/15 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
-							<DollarSign className="w-3.5 h-3.5 shrink-0 -mr-0.5" />
-							<span>{gig.paymentAmount}</span>
-							<span className="text-[11px] font-normal text-muted-foreground">
-								{gig.paymentType === "HOURLY" ? "/ hr" : "Fixed"}
-							</span>
-						</div>
-					</div>
-
-					{/* Title */}
-					<CardTitle className="text-lg font-bold tracking-tight text-foreground group-hover:text-primary transition-colors leading-snug line-clamp-2">
-						<Link
-							to="/gigs/$gigId"
-							params={{ gigId: gig.id }}
-							className="focus:outline-none focus:underline"
-						>
-							{gig.title}
-						</Link>
-					</CardTitle>
-
-					{/* Poster & College info */}
-					<div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground pt-0.5">
-						<div className="flex items-center gap-1 font-medium text-foreground">
-							<div className="w-4 h-4 rounded-full bg-primary/20 text-primary flex items-center justify-center text-[9px] font-bold">
-								{gig.postedByName
-									? gig.postedByName.charAt(0).toUpperCase()
-									: "U"}
-							</div>
-							<span className="truncate max-w-[120px]">{gig.postedByName}</span>
-						</div>
-
-						{gig.collegeName && (
-							<Badge
-								variant="outline"
-								className="text-[10px] font-normal gap-1 px-2 py-0 border-border text-muted-foreground bg-muted/30"
-							>
-								<GraduationCap className="w-3 h-3 text-muted-foreground" />
-								<span className="truncate max-w-[130px]">
-									{gig.collegeName}
-								</span>
-							</Badge>
-						)}
-					</div>
-				</CardHeader>
-
-				{/* Card Body: Description and Skills */}
-				<CardContent className="space-y-4 pb-4">
-					<p className="text-xs sm:text-sm text-muted-foreground line-clamp-3 leading-relaxed">
-						{gig.description}
-					</p>
-
-					{/* Skills Badges */}
-					{gig.skills && gig.skills.length > 0 && (
-						<div className="flex flex-wrap gap-1.5">
-							{gig.skills.slice(0, 4).map((skill) => (
-								<Badge
-									key={skill}
-									variant="secondary"
-									className="text-[11px] font-medium px-2 py-0.5 bg-secondary text-secondary-foreground"
-								>
-									{skill}
-								</Badge>
-							))}
-							{gig.skills.length > 4 && (
-								<Badge
-									variant="outline"
-									className="text-[10px] text-muted-foreground border-border"
-								>
-									+{gig.skills.length - 4} more
-								</Badge>
-							)}
-						</div>
-					)}
-				</CardContent>
-			</div>
-
-			{/* Card Footer: Metadata and CTA Button */}
-			<div className="border-t border-border/60 bg-muted/10 px-6 py-3.5 space-y-3">
-				<div className="flex items-center justify-between text-xs text-muted-foreground">
-					{/* Applicants Count */}
-					<div className="flex items-center gap-1.5">
-						<Users className="w-3.5 h-3.5 text-muted-foreground" />
-						<span>
-							{gig.applicantsCount}{" "}
-							{gig.applicantsCount === 1 ? "applicant" : "applicants"}
-						</span>
-					</div>
-
-					{/* Posted Relative Time */}
-					<div className="flex items-center gap-1.5">
-						<Clock className="w-3.5 h-3.5 text-muted-foreground" />
-						<span>{formatRelativeTime(gig.createdAt)}</span>
-					</div>
-				</div>
-
-				<Button
-					asChild
-					variant="outline"
-					size="sm"
-					className="w-full text-xs font-semibold justify-between group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all shadow-2xs"
-				>
-					<Link to="/gigs/$gigId" params={{ gigId: gig.id }}>
-						<span>View Details</span>
-						<ArrowRight className="w-3.5 h-3.5 ml-1 transition-transform group-hover:translate-x-1" />
-					</Link>
-				</Button>
-			</div>
-		</Card>
 	);
 }
 

@@ -145,17 +145,15 @@ function CreateGigPage() {
 						</p>
 					</CardContent>
 					<CardFooter className="flex flex-col sm:flex-row justify-center gap-3 pt-4">
-						<Link to={"/gigs" as unknown as "/"}>
-							<Button variant="default" className="w-full sm:w-auto">
+						<Button asChild variant="default" className="w-full sm:w-auto">
+							<Link to="/gigs">
 								<Briefcase className="mr-2 h-4 w-4" />
 								Browse All Gigs
-							</Button>
-						</Link>
-						<Link to="/dashboard">
-							<Button variant="outline" className="w-full sm:w-auto">
-								Go to Dashboard
-							</Button>
-						</Link>
+							</Link>
+						</Button>
+						<Button asChild variant="outline" className="w-full sm:w-auto">
+							<Link to="/dashboard">Go to Dashboard</Link>
+						</Button>
 					</CardFooter>
 				</Card>
 			</div>
@@ -282,16 +280,10 @@ function CreateGigPage() {
 
 			await router.invalidate();
 
-			try {
-				await router.navigate({
-					to: "/gigs/$gigId" as unknown as "/",
-					params: { gigId: created.id } as Record<string, string>,
-				});
-			} catch {
-				await router.navigate({
-					to: "/gigs" as unknown as "/",
-				});
-			}
+			await router.navigate({
+				to: "/gigs/$gigId",
+				params: { gigId: created.id },
+			});
 		} catch (err) {
 			setIsSubmitting(false);
 			setSubmitError(
@@ -307,7 +299,7 @@ function CreateGigPage() {
 			{/* Navigation header */}
 			<div className="mb-6 flex items-center justify-between">
 				<Link
-					to={"/gigs" as unknown as "/"}
+					to="/gigs"
 					className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
 				>
 					<ArrowLeft className="mr-1.5 h-4 w-4" />
@@ -730,11 +722,14 @@ function CreateGigPage() {
 							</span>
 						</div>
 						<div className="flex items-center gap-3 w-full sm:w-auto justify-end order-1 sm:order-2">
-							<Link to={"/gigs" as unknown as "/"}>
-								<Button type="button" variant="outline" disabled={isSubmitting}>
-									Cancel
-								</Button>
-							</Link>
+							<Button
+								asChild
+								type="button"
+								variant="outline"
+								disabled={isSubmitting}
+							>
+								<Link to="/gigs">Cancel</Link>
+							</Button>
 							<Button
 								type="submit"
 								variant="default"
