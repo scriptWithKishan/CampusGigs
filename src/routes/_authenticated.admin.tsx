@@ -31,9 +31,10 @@ import {
 } from "../server/adminFns";
 import { getCurrentUserFn } from "../server/authFns";
 
-export const Route = createFileRoute("/admin")({
-	beforeLoad: async () => {
-		const user = await getCurrentUserFn();
+export const Route = createFileRoute("/_authenticated/admin")({
+	beforeLoad: async ({ context }) => {
+		const user =
+			context.user !== undefined ? context.user : await getCurrentUserFn();
 		if (!user) {
 			throw redirect({
 				to: "/login",

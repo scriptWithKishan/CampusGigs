@@ -27,11 +27,23 @@ import {
 } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
+import { getSafeRedirect } from "../lib/safeRedirect";
 import { getCurrentUserFn, logInFn } from "../server/authFns";
 
+interface LoginSearch {
+	redirect?: string;
+}
+
 export const Route = createFileRoute("/login")({
-	beforeLoad: async () => {
-		const user = await getCurrentUserFn();
+	validateSearch: (search: Record<string, unknown>): LoginSearch => {
+		return {
+			redirect:
+				typeof search.redirect === "string" ? search.redirect : undefined,
+		};
+	},
+	beforeLoad: async ({ context }) => {
+		const user =
+			context.user !== undefined ? context.user : await getCurrentUserFn();
 		if (user) {
 			if (user.role === "SUPER_ADMIN") {
 				throw redirect({
@@ -48,6 +60,7 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
 	const router = useRouter();
+	const { redirect: redirectParam } = Route.useSearch();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
@@ -78,11 +91,8 @@ function LoginPage() {
 
 			// Invalidate route cache to refresh auth state in root and redirect
 			await router.invalidate();
-			if (authRes.user?.role === "SUPER_ADMIN") {
-				await router.navigate({ to: "/admin" });
-			} else {
-				await router.navigate({ to: "/dashboard" });
-			}
+			const destination = getSafeRedirect(redirectParam, authRes.user?.role);
+			await router.navigate({ href: destination });
 		} catch (err: unknown) {
 			const message =
 				err instanceof Error
@@ -245,6 +255,13 @@ function LoginPage() {
 							Don&apos;t have an account?{" "}
 							<Link
 								to="/signup"
+								search={
+									redirectParam
+										? {
+												redirect: redirectParam,
+											}
+										: undefined
+								}
 								className="font-medium text-primary hover:underline transition-colors"
 							>
 								Create an account
