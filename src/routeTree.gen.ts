@@ -14,6 +14,9 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as GigsIndexRouteImport } from './routes/gigs.index'
+import { Route as GigsGigIdRouteImport } from './routes/gigs.$gigId'
+import { Route as GigsNewRouteImport } from './routes/gigs.new'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,6 +43,21 @@ const SignupRoute = SignupRouteImport.update({
   path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GigsIndexRoute = GigsIndexRouteImport.update({
+  id: '/gigs/',
+  path: '/gigs/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GigsGigIdRoute = GigsGigIdRouteImport.update({
+  id: '/gigs/$gigId',
+  path: '/gigs/$gigId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GigsNewRoute = GigsNewRouteImport.update({
+  id: '/gigs/new',
+  path: '/gigs/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +65,9 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/gigs/$gigId': typeof GigsGigIdRoute
+  '/gigs/new': typeof GigsNewRoute
+  '/gigs/': typeof GigsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +75,9 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/gigs/$gigId': typeof GigsGigIdRoute
+  '/gigs/new': typeof GigsNewRoute
+  '/gigs': typeof GigsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +86,41 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/gigs/$gigId': typeof GigsGigIdRoute
+  '/gigs/new': typeof GigsNewRoute
+  '/gigs/': typeof GigsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/dashboard' | '/login' | '/signup'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/dashboard'
+    | '/login'
+    | '/signup'
+    | '/gigs/$gigId'
+    | '/gigs/new'
+    | '/gigs/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/dashboard' | '/login' | '/signup'
-  id: '__root__' | '/' | '/admin' | '/dashboard' | '/login' | '/signup'
+  to:
+    | '/'
+    | '/admin'
+    | '/dashboard'
+    | '/login'
+    | '/signup'
+    | '/gigs/$gigId'
+    | '/gigs/new'
+    | '/gigs'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/dashboard'
+    | '/login'
+    | '/signup'
+    | '/gigs/$gigId'
+    | '/gigs/new'
+    | '/gigs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,6 +129,9 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
+  GigsGigIdRoute: typeof GigsGigIdRoute
+  GigsNewRoute: typeof GigsNewRoute
+  GigsIndexRoute: typeof GigsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -116,6 +171,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/gigs/': {
+      id: '/gigs/'
+      path: '/gigs'
+      fullPath: '/gigs/'
+      preLoaderRoute: typeof GigsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gigs/$gigId': {
+      id: '/gigs/$gigId'
+      path: '/gigs/$gigId'
+      fullPath: '/gigs/$gigId'
+      preLoaderRoute: typeof GigsGigIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gigs/new': {
+      id: '/gigs/new'
+      path: '/gigs/new'
+      fullPath: '/gigs/new'
+      preLoaderRoute: typeof GigsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -125,6 +201,9 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
+  GigsGigIdRoute: GigsGigIdRoute,
+  GigsNewRoute: GigsNewRoute,
+  GigsIndexRoute: GigsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

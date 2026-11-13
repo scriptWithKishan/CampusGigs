@@ -117,6 +117,14 @@ function Navbar({ user }: { user: AuthUser | null }) {
 							Explore
 						</Link>
 
+						<Link
+							to="/gigs"
+							className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+							activeProps={{ className: "text-foreground font-semibold" }}
+						>
+							Browse Gigs
+						</Link>
+
 						{user ? (
 							<div className="flex items-center gap-3 pl-4 border-l border-border">
 								{user.role === "SUPER_ADMIN" && (
@@ -231,6 +239,14 @@ function Navbar({ user }: { user: AuthUser | null }) {
 						className="block px-3 py-2 rounded-lg text-base font-medium text-foreground hover:bg-secondary transition-colors"
 					>
 						Explore
+					</Link>
+
+					<Link
+						to="/gigs"
+						onClick={() => setMobileMenuOpen(false)}
+						className="block px-3 py-2 rounded-lg text-base font-medium text-foreground hover:bg-secondary transition-colors"
+					>
+						Browse Gigs
 					</Link>
 
 					{user ? (

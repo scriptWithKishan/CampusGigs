@@ -279,6 +279,18 @@ function DashboardPage() {
 						</div>
 
 						<div className="flex items-center gap-3">
+							{isStudent && (
+								<Button
+									asChild
+									size="sm"
+									className="h-9 px-4 text-xs font-semibold gap-1.5 shadow-xs"
+								>
+									<Link to="/gigs/new">
+										<Plus className="w-3.5 h-3.5" />
+										<span>Post a Gig</span>
+									</Link>
+								</Button>
+							)}
 							<Button
 								variant="outline"
 								onClick={handleLogout}
@@ -1093,11 +1105,14 @@ function DashboardPage() {
 								</div>
 								{isStudent && (
 									<Button
+										asChild
 										variant="ghost"
 										size="sm"
 										className="text-xs font-medium text-primary hover:text-primary gap-1"
 									>
-										View All <ExternalLink className="w-3 h-3" />
+										<Link to="/gigs">
+											View All <ExternalLink className="w-3 h-3" />
+										</Link>
 									</Button>
 								)}
 							</CardHeader>
