@@ -13,11 +13,10 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as SignupRouteImport } from './routes/signup'
-import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated.admin'
-import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
-import { Route as AuthenticatedGigsIndexRouteImport } from './routes/_authenticated.gigs.index'
-import { Route as AuthenticatedGigsGigIdRouteImport } from './routes/_authenticated.gigs.$gigId'
-import { Route as AuthenticatedGigsNewRouteImport } from './routes/_authenticated.gigs.new'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedGigsGigIdRouteImport } from './routes/_authenticated/gigs/$gigId'
+import { Route as AuthenticatedGigsNewRouteImport } from './routes/_authenticated/gigs/new'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -48,11 +47,6 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedGigsIndexRoute = AuthenticatedGigsIndexRouteImport.update({
-  id: '/gigs/',
-  path: '/gigs/',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
 const AuthenticatedGigsGigIdRoute = AuthenticatedGigsGigIdRouteImport.update({
   id: '/gigs/$gigId',
   path: '/gigs/$gigId',
@@ -72,7 +66,6 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/gigs/$gigId': typeof AuthenticatedGigsGigIdRoute
   '/gigs/new': typeof AuthenticatedGigsNewRoute
-  '/gigs/': typeof AuthenticatedGigsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -82,7 +75,6 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/gigs/$gigId': typeof AuthenticatedGigsGigIdRoute
   '/gigs/new': typeof AuthenticatedGigsNewRoute
-  '/gigs': typeof AuthenticatedGigsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -94,7 +86,6 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/gigs/$gigId': typeof AuthenticatedGigsGigIdRoute
   '/_authenticated/gigs/new': typeof AuthenticatedGigsNewRoute
-  '/_authenticated/gigs/': typeof AuthenticatedGigsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -106,7 +97,6 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/gigs/$gigId'
     | '/gigs/new'
-    | '/gigs/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -116,7 +106,6 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/gigs/$gigId'
     | '/gigs/new'
-    | '/gigs'
   id:
     | '__root__'
     | '/'
@@ -127,7 +116,6 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/gigs/$gigId'
     | '/_authenticated/gigs/new'
-    | '/_authenticated/gigs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -181,13 +169,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/gigs/': {
-      id: '/_authenticated/gigs/'
-      path: '/gigs'
-      fullPath: '/gigs/'
-      preLoaderRoute: typeof AuthenticatedGigsIndexRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/gigs/$gigId': {
       id: '/_authenticated/gigs/$gigId'
       path: '/gigs/$gigId'
@@ -210,7 +191,6 @@ interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedGigsGigIdRoute: typeof AuthenticatedGigsGigIdRoute
   AuthenticatedGigsNewRoute: typeof AuthenticatedGigsNewRoute
-  AuthenticatedGigsIndexRoute: typeof AuthenticatedGigsIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -218,7 +198,6 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedGigsGigIdRoute: AuthenticatedGigsGigIdRoute,
   AuthenticatedGigsNewRoute: AuthenticatedGigsNewRoute,
-  AuthenticatedGigsIndexRoute: AuthenticatedGigsIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

@@ -7,13 +7,13 @@ import {
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "../components/ui/select";
-import type { AuthUser } from "../server/authFns";
+} from "../../../components/ui/select";
+import type { AuthUser } from "../../../server/authFns";
 import {
 	createGigFn,
 	type GigPaymentType,
 	type GigStatus,
-} from "../server/gigFns";
+} from "../../../server/gigFns";
 
 export const Route = createFileRoute("/_authenticated/gigs/new")({
 	loader: async ({ context }) => {
@@ -68,7 +68,8 @@ function CreateGigPage() {
 		return (
 			<div className="w-full px-6 sm:px-10 lg:px-16 max-w-[1400px] mx-auto py-16 sm:py-24">
 				<Link
-					to="/gigs"
+					to="/"
+					hash="gigs"
 					className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
 				>
 					&larr; Back to gigs
@@ -108,7 +109,8 @@ function CreateGigPage() {
 
 					<div className="mt-8 flex flex-wrap items-center gap-6">
 						<Link
-							to="/gigs"
+							to="/"
+							hash="gigs"
 							className="text-sm font-medium text-foreground hover:text-primary transition-colors"
 						>
 							Browse all gigs
@@ -264,7 +266,8 @@ function CreateGigPage() {
 			{/* Navigation header */}
 			<div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-6">
 				<Link
-					to="/gigs"
+					to="/"
+					hash="gigs"
 					className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
 				>
 					&larr; Back to gigs
@@ -675,7 +678,8 @@ function CreateGigPage() {
 								{isSubmitting ? "Publishing..." : "Publish gig"}
 							</button>
 							<Link
-								to="/gigs"
+								to="/"
+								hash="gigs"
 								className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
 							>
 								Cancel

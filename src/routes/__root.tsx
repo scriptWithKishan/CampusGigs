@@ -83,76 +83,65 @@ function Navbar({ user }: { user: AuthUser | null }) {
 
 	return (
 		<header className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-border transition-colors">
-			<div className="flex items-center justify-between h-16 px-6 sm:px-8 lg:px-12">
-				{/* Brand Wordmark & Main Nav */}
-				<div className="flex items-center gap-10">
+			<div className="relative flex md:grid md:grid-cols-[1fr_auto_1fr] items-center justify-between h-16 px-6 sm:px-8 lg:px-12">
+				{/* Brand Wordmark */}
+				<div className="flex items-center md:justify-self-start">
 					<Link
 						to="/"
-						className="font-bold text-lg tracking-tight text-foreground hover:opacity-85 transition-opacity"
+						className="font-bold text-lg tracking-tight text-foreground hover:opacity-85 transition-opacity whitespace-nowrap"
 					>
 						Campus<span className="text-primary">Gigs</span>
 					</Link>
+				</div>
 
-					{/* Desktop Navigation Links */}
-					<nav className="hidden md:flex items-center gap-6">
+				{/* Desktop Navigation Links */}
+				<nav className="hidden md:flex items-center gap-8 md:justify-self-center whitespace-nowrap">
+					<Link
+						to="/"
+						activeOptions={{ exact: true }}
+						className={navLinkClass}
+						activeProps={{
+							className:
+								"text-foreground font-semibold after:!w-full after:!bg-foreground",
+						}}
+					>
+						Explore
+					</Link>
+
+					{user && (
 						<Link
-							to="/"
-							activeOptions={{ exact: true }}
+							to="/dashboard"
 							className={navLinkClass}
 							activeProps={{
 								className:
 									"text-foreground font-semibold after:!w-full after:!bg-foreground",
 							}}
 						>
-							Explore
+							Dashboard
 						</Link>
+					)}
 
-						{user && (
-							<Link
-								to="/gigs"
-								className={navLinkClass}
-								activeProps={{
-									className:
-										"text-foreground font-semibold after:!w-full after:!bg-foreground",
-								}}
-							>
-								Gigs
-							</Link>
-						)}
-
-						{user && (
-							<Link
-								to="/dashboard"
-								className={navLinkClass}
-								activeProps={{
-									className:
-										"text-foreground font-semibold after:!w-full after:!bg-foreground",
-								}}
-							>
-								Dashboard
-							</Link>
-						)}
-
-						{user?.role === "SUPER_ADMIN" && (
-							<Link
-								to="/admin"
-								className={navLinkClass}
-								activeProps={{
-									className:
-										"text-foreground font-semibold after:!w-full after:!bg-foreground",
-								}}
-							>
-								Admin
-							</Link>
-						)}
-					</nav>
-				</div>
+					{user?.role === "SUPER_ADMIN" && (
+						<Link
+							to="/admin"
+							className={navLinkClass}
+							activeProps={{
+								className:
+									"text-foreground font-semibold after:!w-full after:!bg-foreground",
+							}}
+						>
+							Admin
+						</Link>
+					)}
+				</nav>
 
 				{/* Right Side Actions */}
-				<div className="hidden md:flex items-center gap-6">
+				<div className="hidden md:flex items-center gap-6 md:justify-self-end">
 					{user ? (
 						<>
-							<span className="text-xs text-muted-foreground">{user.name}</span>
+							<span className="hidden lg:inline text-xs text-muted-foreground">
+								{user.name}
+							</span>
 							<button
 								type="button"
 								onClick={handleLogout}
@@ -208,16 +197,6 @@ function Navbar({ user }: { user: AuthUser | null }) {
 					>
 						Explore
 					</Link>
-
-					{user && (
-						<Link
-							to="/gigs"
-							onClick={() => setMobileMenuOpen(false)}
-							className="block py-1.5 text-sm font-medium text-foreground hover:text-primary transition-colors"
-						>
-							Gigs
-						</Link>
-					)}
 
 					{user && (
 						<Link
