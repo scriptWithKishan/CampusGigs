@@ -1,7 +1,11 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
-import { type AuthUser, getCurrentUserFn } from "../server/authFns";
-import { applyToGigFn, getGigFn, type SerializableGig } from "../server/gigFns";
+import { type AuthUser, getCurrentUserFn } from "../../../server/authFns";
+import {
+	applyToGigFn,
+	getGigFn,
+	type SerializableGig,
+} from "../../../server/gigFns";
 
 export const Route = createFileRoute("/_authenticated/gigs/$gigId")({
 	loader: async ({ params }) => {
@@ -42,7 +46,8 @@ function GigNotFoundView() {
 				link might be broken.
 			</p>
 			<Link
-				to="/gigs"
+				to="/"
+				hash="gigs"
 				className="mt-8 inline-block text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
 			>
 				&larr; Back to all gigs
@@ -143,7 +148,8 @@ function GigDetailContent({ gig, user }: GigDetailContentProps) {
 			{/* Breadcrumb / Share */}
 			<div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-6">
 				<Link
-					to="/gigs"
+					to="/"
+					hash="gigs"
 					className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
 				>
 					&larr; Back to gigs

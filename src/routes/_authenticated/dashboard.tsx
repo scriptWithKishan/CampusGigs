@@ -26,22 +26,22 @@ import {
 	XCircle,
 } from "lucide-react";
 import { useState } from "react";
-import { Badge } from "../components/ui/badge";
-import { Button } from "../components/ui/button";
+import { Badge } from "../../components/ui/badge";
+import { Button } from "../../components/ui/button";
 import {
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "../components/ui/card";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
+} from "../../components/ui/card";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
 import {
 	getStudentApplicationsFn,
 	reviewStudentApplicationFn,
 	type StudentApplicationItem,
-} from "../server/collegeAdminFns";
+} from "../../server/collegeAdminFns";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
 	loader: async ({ context }) => {
@@ -342,7 +342,7 @@ function DashboardPage() {
 									asChild
 									className="font-medium text-xs gap-1.5"
 								>
-									<Link to="/gigs">
+									<Link to="/" hash="gigs">
 										<Plus className="w-3.5 h-3.5" />
 										Browse Campus Gigs
 									</Link>

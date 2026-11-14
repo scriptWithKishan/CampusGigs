@@ -15,21 +15,21 @@ import {
 	XCircle,
 } from "lucide-react";
 import { useState } from "react";
-import { Badge } from "../components/ui/badge";
-import { Button } from "../components/ui/button";
+import { Badge } from "../../components/ui/badge";
+import { Button } from "../../components/ui/button";
 import {
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "../components/ui/card";
+} from "../../components/ui/card";
 import {
 	type CollegeApplicationItem,
 	getCollegeApplicationsFn,
 	reviewCollegeApplicationFn,
-} from "../server/adminFns";
-import { getCurrentUserFn } from "../server/authFns";
+} from "../../server/adminFns";
+import { getCurrentUserFn } from "../../server/authFns";
 
 export const Route = createFileRoute("/_authenticated/admin")({
 	beforeLoad: async ({ context }) => {
